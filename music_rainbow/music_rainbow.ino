@@ -1,0 +1,89 @@
+#define pin 8
+
+#define z0   0
+#define d1  261.63
+#define z1  532.25
+#define g1  1046.5
+#define d2  293.67
+#define z2  587.33
+#define g2  1174.66
+#define d3  329.63
+#define z3  659.25
+#define g3  1318.51
+#define d4  349.23
+#define z4  698.46
+#define g4  1396.92
+#define d5  391.99
+#define z5  783.99
+#define g5  1567.98
+#define d6  440
+#define z6  880
+#define g6  1760
+#define d7  493.88
+#define z7  987.76
+#define g7  1975.52
+
+#define WHOLE 1
+#define HALF 0.5
+#define QUARTER 0.25
+#define EIGHTH 0.125
+#define SIXTEENTH 0.0625
+
+//音调数组
+float key[]={z3,z3,z3,z3,z4,z5,z5,z5,g1,g1,z0,z1,z2,z3,z3,z3,z3,z3,z6,z7,g2,g2,g1,g1,z0,z0,
+z6,z6,z6,z6,z7,g1,g2,g2,z5,z5,g1,g2,g3,g3,g3,g2,g2,g1,g3,g2,g2,z0,z0,z2,
+z3,z3,z3,z3,z4,z5,z5,z5,g2,g1,z0,g1,g2,g3,g3,g3,g4,g3,g2,z7,g2,g2,g1,g1,z0,z7,
+z6,z6,z6,z6,z7,g1,g2,g2,z5,z5,z0,z5,g1,g2,g3,z6,z6,z6,g3,g4,g3,g3,g2,g2,z0,z5,g4,g3,
+g2,g1,g1,g1,z7,g1,g2,g3,z5,z0,z5,g1,z7,z6,z5,z5,z4,z3,z2,z3,z4,z5,z0,z5,z5,z5,
+z6,z6,((z5+z6)/2),z6,z7,z3,g1,z0,g1,z7,g1,g2,g2,g2,g1,g3,g4,g2,z0,z5,z4,z5,
+g3,g3,g4,g3,g2,z7,g1,z0,g1,z7,g1,g5,g5,g4,g3,g2,g3,g3,g2,g2,z5,z4,z5,
+g3,g3,g4,g3,g2,z7,g1,g2,g3,g7,g6,g3,g5,g4,g3,g4,g3,g2,g1};   //音调
+
+//节拍数组（对应每一个音调的持续时间）
+float duration[]={HALF,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,HALF,HALF,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,HALF,HALF,HALF,
+HALF,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,HALF,QUARTER,QUARTER,
+HALF,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,HALF,HALF,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,QUARTER,QUARTER,
+HALF,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,HALF,QUARTER,QUARTER,QUARTER,QUARTER,HALF,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,HALF,QUARTER,QUARTER,QUARTER,QUARTER,
+QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,QUARTER,QUARTER,QUARTER,QUARTER,
+(HALF+QUARTER),QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,QUARTER,QUARTER,QUARTER,QUARTER,(HALF+QUARTER),QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,QUARTER,QUARTER,QUARTER,QUARTER,
+(HALF+QUARTER),QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,WHOLE,QUARTER,QUARTER,QUARTER,QUARTER,(HALF+QUARTER),QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,(HALF+QUARTER),QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,
+(HALF+QUARTER),QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,(HALF+QUARTER),QUARTER,QUARTER,QUARTER,QUARTER,QUARTER,(HALF+QUARTER),QUARTER,(WHOLE+HALF)}; 
+
+int len;
+int lenp;
+
+void setup()
+{
+  pinMode(pin,OUTPUT);
+  len=sizeof(key)/sizeof(key[0]); //音调数组的长度
+  lenp=sizeof(duration)/sizeof(duration[0]);  //节拍数组的长度
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  Serial.print("len:");
+  Serial.println(len);
+  Serial.print("lenp:");
+  Serial.println(lenp); //在串口中显示数组长度
+  if(len==lenp)   //若音调数组和节拍数组的长度相等，则执行音乐播放
+  { 
+    Serial.print("Music start!");
+    for (int x=0;x<len;x++)
+    {
+      tone(pin,key[x]);
+      delay(1500*duration[x]);
+      noTone(pin);
+    }
+   delay(5000);
+  }
+
+  else  //若音调数组和节拍数组的长度不等，则发出警告声
+  {
+    Serial.print("Warning!");
+    tone(pin,700);
+    delay(200);
+    noTone(pin);
+    delay(300);
+  }
+}
